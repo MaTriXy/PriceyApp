@@ -78,6 +78,13 @@ struct ClaudePricing {
 				cacheCreationTokenCostPer1: 3.75e-06,
 				cacheReadTokenCostPer1: 3e-07
 			)
+		case "claude-sonnet-4-5-20250929":
+			return ClaudePricing(
+				inputTokenCostPer1: 3e-06,
+				outputTokenCostPer1: 1.5e-05,
+				cacheCreationTokenCostPer1: 3.75e-06,
+				cacheReadTokenCostPer1: 3e-07
+			)
 		default:
 			return ClaudePricing(
 				inputTokenCostPer1: 0.0,
