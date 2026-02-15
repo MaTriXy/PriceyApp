@@ -16,8 +16,10 @@
 
 - 💰 **Real-time cost tracking** - See your Claude costs live in your menu bar
 - 📊 **Code statistics** - Track lines of code added and removed by Claude Code
+- 🪙 **Token usage** - See total input and output tokens at a glance
 - 💼 **Salary calculator** - Calculate how much developer time you're saving
 - 🎯 **Model-specific pricing** - Accurate costs for different Claude models
+- 📅 **Time range filtering** - View stats for Today, Past 24 Hours, Past 7 Days, or Past 30 Days
 - 🔄 **Auto-refresh** - Automatically updates on code changes
 - ⚡ **Lightweight** - Minimal resource usage, lives quietly in your menu bar
 
@@ -72,8 +74,9 @@ Different Claude models have different pricing, and Pricey automatically detects
 The menu bar shows your current session costs (e.g., `$4.123`). Click the dollar sign icon to see:
 
 - **Code statistics** - Lines added/removed
+- **Token usage** - Input and output tokens (e.g., `Input: 2.3M, Output: 145.2K`)
 - **Salary savings** - Estimated developer time saved
-- **Reset** - Clear current session costs
+- **Time range** - Switch between Today, Past 24 Hours, Past 7 Days, or Past 30 Days
 - **Settings** - Configure the app
 
 ### Settings
