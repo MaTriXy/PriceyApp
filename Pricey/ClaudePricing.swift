@@ -85,7 +85,22 @@ struct ClaudePricing {
 				cacheCreationTokenCostPer1: 3.75e-06,
 				cacheReadTokenCostPer1: 3e-07
 			)
+		case "claude-haiku-4-5-20251001":
+			return ClaudePricing(
+				inputTokenCostPer1: 1e-06,
+				outputTokenCostPer1: 5e-06,
+				cacheCreationTokenCostPer1: 1.25e-06,
+				cacheReadTokenCostPer1: 1e-07
+			)
+        case "<synthetic>":
+            return ClaudePricing(
+                inputTokenCostPer1: 0.0,
+                outputTokenCostPer1: 0.0,
+                cacheCreationTokenCostPer1: 0.0,
+                cacheReadTokenCostPer1: 0.0
+            )
 		default:
+			NSLog("⚠️ Unknown Claude model encountered: %@", modelName)
 			return ClaudePricing(
 				inputTokenCostPer1: 0.0,
 				outputTokenCostPer1: 0.0,
