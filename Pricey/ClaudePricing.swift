@@ -1,5 +1,7 @@
 import Foundation
 
+// fetch up-to-date model pricing from: https://github.com/colesmcintosh/litellm/blob/main/model_prices_and_context_window.json
+
 struct ClaudePricing {
 	let inputTokenCostPer1: Double
 	let outputTokenCostPer1: Double
@@ -57,7 +59,7 @@ struct ClaudePricing {
 				cacheCreationTokenCostPer1: 3.75e-06,
 				cacheReadTokenCostPer1: 3e-07
 			)
-		case "claude-opus-4-20250514", "claude-4-opus-20250514":
+		case "claude-opus-4-6", "claude-opus-4-20250514", "claude-4-opus-20250514":
 			return ClaudePricing(
 				inputTokenCostPer1: 1.5e-05,
 				outputTokenCostPer1: 7.5e-05,
