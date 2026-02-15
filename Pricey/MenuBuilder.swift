@@ -4,15 +4,18 @@ class MenuBuilder {
 	private let formatter = FormatterService.shared
 	private let calculator = UsageCalculator()
 
-	func buildMenu(with stats: UsageStat, target: AnyObject) -> NSMenu {
+	func buildMenu(with stats: UsageStat, target: AnyObject, selectedTimeRange: TimeRange) -> NSMenu {
 		let menu = NSMenu()
 
 		menu.addItem(createLineStatsItem(stats: stats))
 		menu.addItem(createPromptsItem(count: stats.userPrompts))
+		menu.addItem(createTokensItem(stats: stats))
 		menu.addItem(createVibeTimeItem(seconds: stats.timeWaitedForPrompt))
 		menu.addItem(createSalaryItem(stats: stats))
 		menu.addItem(NSMenuItem.separator())
 		addControlItems(to: menu, target: target)
+		menu.addItem(NSMenuItem.separator())
+		addTimeRangeItems(to: menu, target: target, selectedTimeRange: selectedTimeRange)
 
 		return menu
 	}
@@ -61,6 +64,19 @@ class MenuBuilder {
 		return item
 	}
 
+	private func createTokensItem(stats: UsageStat) -> NSMenuItem {
+		let totalInput = stats.inputTokens + stats.cacheCreationTokens + stats.cacheReadTokens
+		let totalOutput = stats.outputTokens
+		let inputFormatted = formatter.formatTokenCount(totalInput)
+		let outputFormatted = formatter.formatTokenCount(totalOutput)
+		let item = NSMenuItem(
+			title: "🪙 Input: \(inputFormatted), Output: \(outputFormatted)",
+			action: #selector(AppDelegate.emptyCallback),
+			keyEquivalent: ""
+		)
+		return item
+	}
+
 	private func createVibeTimeItem(seconds: Int64) -> NSMenuItem {
 		let timeFormatted = formatter.formatVibeTime(seconds: seconds)
 		let item = NSMenuItem(
@@ -83,14 +99,6 @@ class MenuBuilder {
 	}
 
 	private func addControlItems(to menu: NSMenu, target: AnyObject) {
-		let resetItem = NSMenuItem(
-			title: "Reset",
-			action: #selector(AppDelegate.resetCosts),
-			keyEquivalent: ""
-		)
-		resetItem.target = target
-		menu.addItem(resetItem)
-
 		let settingsItem = NSMenuItem(
 			title: "Settings",
 			action: #selector(AppDelegate.openSettings),
@@ -106,5 +114,21 @@ class MenuBuilder {
 		)
 		quitItem.target = target
 		menu.addItem(quitItem)
+	}
+
+	private func addTimeRangeItems(to menu: NSMenu, target: AnyObject, selectedTimeRange: TimeRange) {
+		let actions: [(TimeRange, Selector)] = [
+			(.today, #selector(AppDelegate.selectToday)),
+			(.past24Hours, #selector(AppDelegate.selectPast24Hours)),
+			(.past7Days, #selector(AppDelegate.selectPast7Days)),
+			(.past30Days, #selector(AppDelegate.selectPast30Days)),
+		]
+
+		for (range, action) in actions {
+			let item = NSMenuItem(title: range.rawValue, action: action, keyEquivalent: "")
+			item.target = target
+			item.state = (range == selectedTimeRange) ? .on : .off
+			menu.addItem(item)
+		}
 	}
 }

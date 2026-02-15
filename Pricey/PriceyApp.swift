@@ -30,10 +30,27 @@ struct PriceyApp: App {
 		}
 	}
 	
-	static func getMidnightToday() -> Date {
+}
+
+enum TimeRange: String, CaseIterable {
+	case today = "Today"
+	case past24Hours = "Past 24 Hours"
+	case past7Days = "Past 7 Days"
+	case past30Days = "Past 30 Days"
+
+	func threshold() -> Date {
 		let calendar = Calendar.current
-		let today = Date()
-		return calendar.startOfDay(for: today)
+		let now = Date()
+		switch self {
+		case .today:
+			return calendar.startOfDay(for: now)
+		case .past24Hours:
+			return now.addingTimeInterval(-24 * 60 * 60)
+		case .past7Days:
+			return now.addingTimeInterval(-7 * 24 * 60 * 60)
+		case .past30Days:
+			return now.addingTimeInterval(-30 * 24 * 60 * 60)
+		}
 	}
 }
 
@@ -43,7 +60,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	var updateTimer: Timer?
 	var animatedTotalCost: AnimatedDouble!
 	var animatedClaudeCost: AnimatedDouble!
-	var timestampThreshold: Date = PriceyApp.getMidnightToday()
+	var selectedTimeRange: TimeRange = {
+		if let saved = UserDefaults.standard.string(forKey: "selectedTimeRange"),
+		   let range = TimeRange(rawValue: saved) {
+			return range
+		}
+		return .today
+	}()
+	lazy var timestampThreshold: Date = selectedTimeRange.threshold()
 
 	private let formatter = FormatterService.shared
 	private let menuBuilder = MenuBuilder()
@@ -94,21 +118,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
 	func createMenu() {
 		let totalUsageStat = getTokenCounts()
-		let menu = menuBuilder.buildMenu(with: totalUsageStat, target: self)
+		let menu = menuBuilder.buildMenu(with: totalUsageStat, target: self, selectedTimeRange: selectedTimeRange)
 		statusBarItem.menu = menu
 	}
 	
 	@objc func emptyCallback() {		
 	}
 	
-	@objc func resetCosts() {
+	@objc func selectToday() { selectTimeRange(.today) }
+	@objc func selectPast24Hours() { selectTimeRange(.past24Hours) }
+	@objc func selectPast7Days() { selectTimeRange(.past7Days) }
+	@objc func selectPast30Days() { selectTimeRange(.past30Days) }
+
+	private func selectTimeRange(_ range: TimeRange) {
+		selectedTimeRange = range
+		timestampThreshold = range.threshold()
+		UserDefaults.standard.set(range.rawValue, forKey: "selectedTimeRange")
 		costTracker.reset()
 		animatedTotalCost.value = 0.0
 		animatedClaudeCost.value = 0.0
-		timestampThreshold = Date()
-		
-		// Clear cache to force re-reading with new timestamp threshold
 		jsonlReader.clearCache()
+		updateStatusBarTitle()
 	}
 	
 	@objc func openSettings() {

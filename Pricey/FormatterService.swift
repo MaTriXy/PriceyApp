@@ -39,6 +39,20 @@ class FormatterService {
 		return salaryFormatter.string(from: NSNumber(value: value)) ?? "$0"
 	}
 
+	func formatTokenCount(_ value: Int64) -> String {
+		let absValue = Double(abs(value))
+		switch absValue {
+		case 1_000_000_000...:
+			return String(format: "%.1fG", absValue / 1_000_000_000)
+		case 1_000_000...:
+			return String(format: "%.1fM", absValue / 1_000_000)
+		case 1_000...:
+			return String(format: "%.1fK", absValue / 1_000)
+		default:
+			return "\(value)"
+		}
+	}
+
 	func formatVibeTime(seconds: Int64) -> String {
 		let totalMinutes = Int(seconds / 60)
 		let minutes = totalMinutes % 60
