@@ -75,6 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	private let jsonlReader = IncrementalJsonlReader()
 
 	func applicationDidFinishLaunching(_ notification: Notification) {
+		ModelPricingFetcher.fetch()
 		NSApp.setActivationPolicy(.accessory)
 		statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 		
